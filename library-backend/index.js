@@ -113,13 +113,18 @@ const typeDefs = `
     type Query {
         bookCount: Int!
         authorCount: Int!
+        allBooks: [Book!]!
     }
 `;
 
 const resolvers = {
+    Book: {
+        author: (root) => ({ name: root.author, id: root.id, born: root.born }),
+    },
     Query: {
         bookCount: () => books.length,
         authorCount: () => authors.length,
+        allBooks: () => books,
     },
 };
 
