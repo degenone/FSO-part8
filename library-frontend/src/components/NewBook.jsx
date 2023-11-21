@@ -1,26 +1,40 @@
+import { useMutation } from '@apollo/client';
 import { useState } from 'react';
+import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries';
 
-const NewBook = (props) => {
+const NewBook = () => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [published, setPublished] = useState('');
     const [genre, setGenre] = useState('');
     const [genres, setGenres] = useState([]);
+    const [createBook] = useMutation(ADD_BOOK, {
+        refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
+        onCompleted: () => {
+            setTitle('');
+            setPublished('');
+            setAuthor('');
+            setGenres([]);
+            setGenre('');
+        },
+        onError: (error) => {
+            const messages = error.graphQLErrors
+                .map((e) => e.message)
+                .join(', ');
+            console.error('messages', messages);
+        },
+    });
 
-    if (!props.show) {
-        return null;
-    }
-
-    const submit = async (event) => {
-        event.preventDefault();
-
-        console.log('add book...');
-
-        setTitle('');
-        setPublished('');
-        setAuthor('');
-        setGenres([]);
-        setGenre('');
+    const submit = async (e) => {
+        e.preventDefault();
+        createBook({
+            variables: {
+                title,
+                author,
+                published: +published,
+                genres,
+            },
+        });
     };
 
     const addGenre = () => {
@@ -36,6 +50,7 @@ const NewBook = (props) => {
                     <input
                         value={title}
                         onChange={({ target }) => setTitle(target.value)}
+                        required
                     />
                 </div>
                 <div>
@@ -43,6 +58,7 @@ const NewBook = (props) => {
                     <input
                         value={author}
                         onChange={({ target }) => setAuthor(target.value)}
+                        required
                     />
                 </div>
                 <div>
@@ -51,6 +67,7 @@ const NewBook = (props) => {
                         type='number'
                         value={published}
                         onChange={({ target }) => setPublished(target.value)}
+                        required
                     />
                 </div>
                 <div>

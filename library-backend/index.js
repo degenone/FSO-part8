@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
+const { v4: uuidv4 } = require('uuid');
 
 let authors = [
     {
@@ -159,13 +160,14 @@ const resolvers = {
         addBook: (root, args) => {
             const author = authors.find((a) => a.name === args.author);
             if (!author) {
-                authors = [...authors, { name: args.author }];
+                authors = [...authors, { name: args.author, id: uuidv4() }];
             }
             const book = {
                 title: args.title,
                 author: args.author,
                 published: args.published,
                 genres: args.genres,
+                id: uuidv4(),
             };
             books = [...books, book];
             return book;
