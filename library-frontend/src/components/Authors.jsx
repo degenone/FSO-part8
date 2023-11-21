@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { ALL_AUTHORS } from '../queries';
+import BirthYearForm from './BirthYearForm';
 
 const Authors = () => {
     const { data, loading } = useQuery(ALL_AUTHORS);
@@ -25,6 +26,12 @@ const Authors = () => {
                     ))}
                 </tbody>
             </table>
+            <BirthYearForm />
+            <datalist id='author-names'>
+                {data.allAuthors.map((a) => (
+                    <option key={a.id} value={a.name} />
+                ))}
+            </datalist>
         </div>
     );
 };
