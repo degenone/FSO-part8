@@ -26,12 +26,7 @@ const Authors = () => {
                     ))}
                 </tbody>
             </table>
-            <BirthYearForm />
-            <datalist id='author-names'>
-                {data.allAuthors.map((a) => (
-                    <option key={a.id} value={a.name} />
-                ))}
-            </datalist>
+            <BirthYearForm authors={data.allAuthors.map((a) => a.name)} />
         </div>
     );
 };

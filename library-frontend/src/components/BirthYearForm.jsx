@@ -1,13 +1,15 @@
 import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { EDIT_AUTHOR } from '../queries';
+import Select from 'react-select';
 
-const BirthYearForm = () => {
-    const [name, setName] = useState('');
+const BirthYearForm = (props) => {
+    const { authors } = props;
+    const options = authors.map((a) => ({ value: a, label: a }));
+    const [name, setName] = useState(null);
     const [year, setYear] = useState('');
     const [editAuthor] = useMutation(EDIT_AUTHOR, {
         onCompleted: () => {
-            setName('');
             setYear('');
         },
         onError: (error) => {
@@ -20,7 +22,7 @@ const BirthYearForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         editAuthor({
-            variables: { name, setBornTo: +year },
+            variables: { name: name.value, setBornTo: +year },
         });
     };
     return (
@@ -29,14 +31,11 @@ const BirthYearForm = () => {
                 <fieldset>
                     <legend>Update author birth year</legend>
                     <div>
-                        <label htmlFor='name'>Author name:</label>
-                        <input
-                            type='text'
-                            name='name'
-                            id='name'
-                            list='author-names'
-                            value={name}
-                            onChange={({ target }) => setName(target.value)}
+                        <span>Select author:</span>
+                        <Select
+                            defaultValue={name}
+                            onChange={setName}
+                            options={options}
                         />
                     </div>
                     <div>
