@@ -1,6 +1,6 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
-const { v4: uuidv4 } = require('uuid');
+const { GraphQLError } = require('graphql');
 require('dotenv').config();
 const mongoose = require('mongoose');
 const Author = require('./models/author');
@@ -78,7 +78,17 @@ const resolvers = {
             let author = await Author.findOne({ name: args.author });
             if (!author) {
                 author = new Author({ name: args.author });
-                await author.save();
+                try {
+                    await author.save();
+                } catch (error) {
+                    throw new GraphQLError('Failed adding author', {
+                        extensions: {
+                            code: 'BAD_USER_INPUT',
+                            invalidArgs: args.author,
+                            error,
+                        },
+                    });
+                }
             }
             const book = new Book({
                 title: args.title,
@@ -86,11 +96,28 @@ const resolvers = {
                 published: args.published,
                 genres: args.genres,
             });
-            await book.save();
+            try {
+                await book.save();
+            } catch (error) {
+                throw new GraphQLError('Failed adding book', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        error,
+                    },
+                });
+            }
             return book;
         },
         editAuthor: async (root, args) => {
             const author = await Author.findOne({ name: args.name });
+            if (!author) {
+                throw new GraphQLError('Author not found', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.name,
+                    },
+                });
+            }
             author.born = args.setBornTo;
             return author.save();
         },
