@@ -30,12 +30,17 @@ const LoginForm = (props) => {
         e.preventDefault();
         login({ variables: { username, password } });
     };
+    const formStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: '1rem',
+    };
     return (
         <div>
             <form onSubmit={handleSubmit} style={{ width: 'max-content' }}>
                 <fieldset>
                     <legend>Login</legend>
-                    <div>
+                    <div style={formStyle}>
                         <label htmlFor='username'>Username:</label>
                         <input
                             type='text'
@@ -45,7 +50,7 @@ const LoginForm = (props) => {
                             onChange={({ target }) => setUsername(target.value)}
                         />
                     </div>
-                    <div>
+                    <div style={formStyle}>
                         <label htmlFor='password'>Password:</label>
                         <input
                             type='password'

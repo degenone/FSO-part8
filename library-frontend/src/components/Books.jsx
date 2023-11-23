@@ -8,7 +8,8 @@ const Books = () => {
         variables: { genre },
     });
     const genresStyle = {
-        display: 'flex',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
         gap: '0.5rem',
     };
     if (loading) {

@@ -73,7 +73,7 @@ const resolvers = {
     Book: {
         author: async (root) => {
             const author = await Author.findById(root.author);
-            return { name: author.name, id: author.id, born: author.born };
+            return { name: author.name, id: author._id, born: author.born };
         },
     },
     Author: {
