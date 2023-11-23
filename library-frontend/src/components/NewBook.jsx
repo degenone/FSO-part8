@@ -2,7 +2,8 @@ import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from '../queries';
 
-const NewBook = () => {
+const NewBook = (props) => {
+    const { notify } = props;
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [published, setPublished] = useState('');
@@ -21,10 +22,9 @@ const NewBook = () => {
             const messages = error.graphQLErrors
                 .map((e) => e.message)
                 .join(', ');
-            console.error('messages', messages);
+            notify(messages);
         },
     });
-
     const submit = async (e) => {
         e.preventDefault();
         createBook({
@@ -36,12 +36,10 @@ const NewBook = () => {
             },
         });
     };
-
     const addGenre = () => {
         setGenres(genres.concat(genre));
         setGenre('');
     };
-
     return (
         <div>
             <form onSubmit={submit} style={{ width: 'max-content' }}>

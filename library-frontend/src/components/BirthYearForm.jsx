@@ -4,7 +4,7 @@ import { EDIT_AUTHOR } from '../queries';
 import Select from 'react-select';
 
 const BirthYearForm = (props) => {
-    const { authors } = props;
+    const { authors, notify } = props;
     const options = authors.map((a) => ({ value: a, label: a }));
     const [name, setName] = useState(null);
     const [year, setYear] = useState('');
@@ -16,11 +16,12 @@ const BirthYearForm = (props) => {
             const messages = error.graphQLErrors
                 .map((e) => e.message)
                 .join(', ');
-            console.error('messages', messages);
+            notify(messages);
         },
     });
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!name) return;
         editAuthor({
             variables: { name: name.value, setBornTo: +year },
         });
