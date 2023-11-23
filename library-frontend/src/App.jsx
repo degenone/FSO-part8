@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import { USER_KEY } from './constants';
 import { useApolloClient } from '@apollo/client';
+import Recommend from './components/Recommend';
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -43,7 +44,8 @@ function App() {
             <nav style={navStyle}>
                 <Link to='/'>Books</Link>
                 <Link to='/authors'>Authors</Link>
-                <Link to='/add'>Add</Link>
+                <Link to='/add'>Add Book</Link>
+                <Link to='/recommend'>Recommend</Link>
                 <button
                     style={{ marginInlineStart: 'auto' }}
                     type='button'
@@ -60,6 +62,7 @@ function App() {
                         element={<Authors notify={notify} />}
                     />
                     <Route path='/add' element={<NewBook notify={notify} />} />
+                    <Route path='/recommend' element={<Recommend />} />
                 </Routes>
             </main>
         </div>

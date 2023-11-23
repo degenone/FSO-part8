@@ -37,6 +37,7 @@ const typeDefs = `
         allAuthors: [Author!]!
         me: User
         allGenres: [String!]!
+        recommendedBooks: [Book!]!
     }
     type Mutation {
         addBook(
@@ -109,6 +110,16 @@ const resolvers = {
                 }
                 return acc;
             }, []);
+        },
+        recommendedBooks: async (root, args, { user }) => {
+            if (!user) {
+                throw new GraphQLError('Not authorized', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                    },
+                });
+            }
+            return Book.find({ genres: user.favoriteGenre });
         },
     },
     Mutation: {
