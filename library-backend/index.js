@@ -36,6 +36,7 @@ const typeDefs = `
         allBooks(author: String, genre: String): [Book!]!
         allAuthors: [Author!]!
         me: User
+        allGenres: [String!]!
     }
     type Mutation {
         addBook(
@@ -98,6 +99,17 @@ const resolvers = {
         },
         allAuthors: async () => Author.find({}),
         me: (root, args, { user }) => user,
+        allGenres: async () => {
+            const genres = (await Book.find({}, { genres: 1, _id: 0 }))
+                .map((g) => g.genres)
+                .flat();
+            return genres.reduce((acc, genre) => {
+                if (!acc.includes(genre)) {
+                    return [...acc, genre];
+                }
+                return acc;
+            }, []);
+        },
     },
     Mutation: {
         addBook: async (root, args, { user }) => {
