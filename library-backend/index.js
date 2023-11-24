@@ -70,12 +70,6 @@ const typeDefs = `
 `;
 
 const resolvers = {
-    Book: {
-        author: async (root) => {
-            const author = await Author.findById(root.author);
-            return { name: author.name, id: author._id, born: author.born };
-        },
-    },
     Author: {
         bookCount: async (root) =>
             Book.collection.countDocuments({ author: root._id }),
@@ -85,18 +79,18 @@ const resolvers = {
         authorCount: async () => Author.collection.countDocuments(),
         allBooks: async (root, args) => {
             if (!args.author && !args.genre) {
-                return Book.find({});
+                return Book.find({}).populate('author');
             } else if (!args.author) {
-                return Book.find({ genres: args.genre });
+                return Book.find({ genres: args.genre }).populate('author');
             }
             const author = await Author.findOne({ name: args.author });
             if (!args.genre) {
-                return Book.find({ author: author._id });
+                return Book.find({ author: author._id }).populate('author');
             }
             return Book.find({
                 author: author._id,
                 genres: args.genre,
-            });
+            }).populate('author');
         },
         allAuthors: async () => Author.find({}),
         me: (root, args, { user }) => user,
@@ -153,7 +147,8 @@ const resolvers = {
                 genres: args.genres,
             });
             try {
-                return book.save();
+                await book.save();
+                return book.populate('author');
             } catch (error) {
                 throw new GraphQLError('Failed adding book', {
                     extensions: {
