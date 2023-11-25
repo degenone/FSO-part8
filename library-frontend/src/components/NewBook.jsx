@@ -14,7 +14,6 @@ const NewBook = (props) => {
             cache.updateQuery(
                 { query: ALL_BOOKS, variables: { genre: '' } },
                 (data) => {
-                    console.log('data ALL_BOOKS', data);
                     const updatedGenres = [
                         ...new Set([
                             ...data.allGenres,

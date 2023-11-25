@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import { USER_KEY } from './constants';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useSubscription } from '@apollo/client';
 import Recommend from './components/Recommend';
+import { BOOK_ADDED } from './queries';
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -26,6 +27,12 @@ function App() {
         }, 3500);
     };
     useEffect(() => setLoggedIn(Boolean(localStorage.getItem(USER_KEY))), []);
+    useSubscription(BOOK_ADDED, {
+        onData: ({ data }) => {
+            const bookAdded = data.data.bookAdded;
+            notify(`Book ${bookAdded.title} was just added.`);
+        },
+    });
     if (!loggedIn) {
         return (
             <div>

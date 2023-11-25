@@ -51,7 +51,7 @@ const resolvers = {
                     },
                 });
             }
-            return Book.find({ genres: user.favoriteGenre });
+            return Book.find({ genres: user.favoriteGenre }).populate('author');
         },
     },
     Mutation: {
