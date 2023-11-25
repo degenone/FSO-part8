@@ -8,10 +8,6 @@ const User = require('./models/user');
 const pubsub = new PubSub();
 
 const resolvers = {
-    Author: {
-        bookCount: async (root) =>
-            Book.collection.countDocuments({ author: root._id }),
-    },
     Query: {
         bookCount: async () => Book.collection.countDocuments(),
         authorCount: async () => Author.collection.countDocuments(),
@@ -66,17 +62,18 @@ const resolvers = {
             let author = await Author.findOne({ name: args.author });
             if (!author) {
                 author = new Author({ name: args.author });
-                try {
-                    await author.save();
-                } catch (error) {
-                    throw new GraphQLError('Failed adding author', {
-                        extensions: {
-                            code: 'BAD_USER_INPUT',
-                            invalidArgs: args.author,
-                            error,
-                        },
-                    });
-                }
+            }
+            author.bookCount++;
+            try {
+                await author.save();
+            } catch (error) {
+                throw new GraphQLError('Failed saving author', {
+                    extensions: {
+                        code: 'BAD_USER_INPUT',
+                        invalidArgs: args.author,
+                        error,
+                    },
+                });
             }
             const bookAdded = new Book({
                 title: args.title,
