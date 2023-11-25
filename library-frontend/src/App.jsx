@@ -8,7 +8,8 @@ import Notification from './components/Notification';
 import { USER_KEY } from './constants';
 import { useApolloClient, useSubscription } from '@apollo/client';
 import Recommend from './components/Recommend';
-import { BOOK_ADDED } from './queries';
+import { ALL_BOOKS, BOOK_ADDED } from './queries';
+import { updateCache } from './utils';
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(false);
@@ -31,6 +32,7 @@ function App() {
         onData: ({ data }) => {
             const bookAdded = data.data.bookAdded;
             notify(`Book ${bookAdded.title} was just added.`);
+            updateCache(client.cache, ALL_BOOKS, bookAdded);
         },
     });
     if (!loggedIn) {
